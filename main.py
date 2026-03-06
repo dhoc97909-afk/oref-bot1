@@ -1,7 +1,6 @@
 import time
-import json
-from datetime import datetime
 import requests
+from datetime import datetime
 import tzevaadom
 
 GOOGLE_CHAT_WEBHOOKS = [
@@ -25,12 +24,10 @@ def send_to_google_chat(message: str):
             log(f"שגיאה ל-Webhook #{i}: {e}")
 
 
-def handle_alert(alerts):
+def handler(alerts):
     now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     log(f"התראה חדשה: {alerts}")
-
     areas_text = "\n".join(f"  • {a['name']}" for a in alerts) if alerts else "  • לא ידוע"
-
     message = (
         f"🚨 *התראת צבע אדום* 🚨\n"
         f"🕐 {now}\n\n"
@@ -40,8 +37,7 @@ def handle_alert(alerts):
 
 
 log("מאזין להתראות צבע אדום...")
-tzevaadom.alerts_listener(handle_alert)
+tzevaadom.alerts_listener(handler)
 
-# שמור את התהליך פעיל
 while True:
     time.sleep(60)
