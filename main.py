@@ -14,9 +14,19 @@ FILTER_AREAS = []
 OREF_URL = "https://www.oref.org.il/WarningMessages/alert/alerts.json"
 
 HEADERS = {
-    "Referer": "https://www.oref.org.il/",
+    "Referer": "https://www.oref.org.il/12481-he/Pakar.aspx",
     "X-Requested-With": "XMLHttpRequest",
-    "User-Agent": "Mozilla/5.0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
 }
 
 last_alert_id = None
@@ -73,19 +83,19 @@ def send_to_google_chat(message: str):
         try:
             response = requests.post(webhook, json=payload, timeout=10)
             response.raise_for_status()
-            log(f"✓ נשלח ל-Webhook #{i}")
+            log(f"נשלח ל-Webhook #{i}")
         except requests.RequestException as e:
-            log(f"✗ שגיאה ל-Webhook #{i}: {e}")
+            log(f"שגיאה ל-Webhook #{i}: {e}")
 
 
 def main():
     global last_alert_id
-    log("🟢 מאזין לפיקוד העורף...")
+    log("מאזין לפיקוד העורף...")
 
     while True:
         alert = fetch_active_alerts()
         if alert and isinstance(alert, dict) and alert.get("data"):
-            log(f"🚨 התראה: {json.dumps(alert, ensure_ascii=False)}")
+            log(f"התראה: {json.dumps(alert, ensure_ascii=False)}")
             if should_notify(alert):
                 send_to_google_chat(format_alert_message(alert))
                 last_alert_id = alert.get("id", "")
